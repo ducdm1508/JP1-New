@@ -43,19 +43,11 @@ public class InvoiceController {
         }
     }
 
-    public List<Invoice> getCusCanNotPay(List<Account> accounts){
-        List<Invoice> cusCanNotPay = is.getCusCanNotPay(accounts);
-        if (cusCanNotPay != null){
-            return cusCanNotPay;
-        }else {
-            return null;
-        }
-    }
 
-    public List<Invoice> getCusCanPay(List<Account> accounts){
-        List<Invoice> cusCanPay = is.getCusCanPay(accounts);
-        if (cusCanPay != null){
-            return cusCanPay;
+    public Invoice payBill(Account account){
+        Invoice payInvoice = is.payBill(account);
+        if (payInvoice != null){
+            return payInvoice;
         }else {
             return null;
         }

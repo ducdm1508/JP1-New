@@ -5,7 +5,6 @@ import Controller.CustomerController;
 public class Account {
     private int id;
     private Customer customer;
-
     private double balance;
 
     public Account(){;}

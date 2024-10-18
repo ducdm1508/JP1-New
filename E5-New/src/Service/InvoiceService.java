@@ -40,37 +40,38 @@ public class InvoiceService {
                 .toList();
 
         discountedInvoices.forEach(inv -> {
-            double discount = inv.getCustomer().getDiscount() + 10;
-            inv.setAmount(inv.getAmount() * (1 - discount / 100));
+
+            double currentDiscount = inv.getCustomer().getDiscount();
+            double newDiscount = currentDiscount + 10;
+            inv.getCustomer().setDiscount(newDiscount);
+
+            double discountedAmount = inv.getAmount() * (1 - newDiscount / 100);
+            inv.setAmount(discountedAmount);
         });
-        return discountedInvoices.size() > 0 ? discountedInvoices : null;
+
+        return discountedInvoices.isEmpty() ? null : discountedInvoices;
     }
 
-    public List<Invoice> getCusCanNotPay(List<Account> accounts) {
-        List<Invoice> cusCanNotPay = new ArrayList<>();
 
-        accounts.forEach(account -> {
-            List<Invoice> unpayableInvoices = invoices.stream()
-                    .filter(inv -> inv.getCustomer().equals(account.getCustomer()))
-                    .filter(invoice -> account.getBalance() < invoice.getAmountAfterDiscount())
-                    .toList();
-            cusCanNotPay.addAll(unpayableInvoices);
-        });
+    public Invoice payBill(Account account) {
+        Optional<Invoice> payInvoice = invoices.stream()
+                .filter(inv -> inv.getCustomer().getId() == account.getCustomer().getId())
+                .filter(inv -> {
+                    if (inv.getCustomer().getGender() == Gender.F && inv.getDatetime().getMonthValue() == 8) {
+                        double discount = inv.getCustomer().getDiscount() + 10;
+                        inv.getCustomer().setDiscount(discount);
+                        inv.setAmount(inv.getAmount() * (1 - discount / 100));
+                    }
+                    return account.getBalance() >= inv.getAmountAfterDiscount();
+                })
+                .findFirst();
 
-        return cusCanNotPay.size() > 0 ? cusCanNotPay : null;
-    }
-
-    public List<Invoice> getCusCanPay(List<Account> accounts) {
-        List<Invoice> cusCanPay = new ArrayList<>();
-
-        accounts.forEach(account -> {
-            List<Invoice> payableInvoices = invoices.stream()
-                    .filter(inv -> inv.getCustomer().equals(account.getCustomer()))
-                    .filter(invoice -> account.getBalance() >= invoice.getAmountAfterDiscount())
-                    .toList();
-            cusCanPay.addAll(payableInvoices);
-        });
-
-        return cusCanPay.size() > 0 ? cusCanPay : null;
+        if (payInvoice.isPresent()) {
+            double newBalance = account.getBalance() - payInvoice.get().getAmountAfterDiscount();
+            account.setBalance(newBalance);
+            return payInvoice.get();
+        } else {
+            return null;
+        }
     }
 }
