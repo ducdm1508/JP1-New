@@ -14,16 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
 
-        List<Customer> customers = new ArrayList<Customer>();
-        List<Account> accounts = new ArrayList<Account>();
-        List<Invoice> invoices = new ArrayList<Invoice>();
+        List<Customer> customers = new ArrayList<>();
+        List<Account> accounts = new ArrayList<>();
+        List<Invoice> invoices = new ArrayList<>();
 
         CustomerSevice cs = new CustomerSevice(customers);
         CustomerController ct = new CustomerController(cs);
@@ -33,7 +31,6 @@ public class Main {
 
         InvoiceService is = new InvoiceService(invoices);
         InvoiceController it = new InvoiceController(is);
-
 
         customers.add(new Customer(1, "Trung", Gender.M, 10));
         customers.add(new Customer(2, "Linh", Gender.F, 21));
@@ -50,63 +47,103 @@ public class Main {
         invoices.add(new Invoice(3, customers.get(2), 3000, LocalDate.of(2024, 9, 10)));
         invoices.add(new Invoice(4, customers.get(1), 4500, LocalDate.of(2024, 8, 12)));
 
-        ct.sortedCustomerByName().forEach(System.out::println);
-//
-//        System.out.print("\nInput Account ID : ");
-//        int accountId = sc.nextInt();
-//        Account foundAccById = at.getAccById(accountId);
-//        if (foundAccById != null) {
-//            System.out.println(foundAccById);
-//        } else {
-//            System.out.println("Account not found");
-//        }
-//
-//        sc.nextLine();
-//        System.out.print("\nInput Account Name : ");
-//        String accountName = sc.nextLine();
-//        List<Account> getAccByNames = at.getAccByCusName(accountName);
-//        if (getAccByNames == null) {
-//            System.out.println("Account not found");
-//        } else {
-//            System.out.println(getAccByNames);
-//        }
-//
-//        System.out.print("\nInput Invoice ID : ");
-//        int invId = sc.nextInt();
-//        Invoice foundInvById = it.getInvoiceById(invId);
-//        if (foundInvById != null) {
-//            System.out.println(foundInvById);
-//        } else {
-//            System.out.println("Invoice not found");
-//        }
-//
-//        sc.nextLine();
-//        System.out.print("\nInput Invoice Name : ");
-//        String invName = sc.nextLine();
-//        List<Invoice> getInvByNames = it.getInvoicesByName(invName);
-//        if (getInvByNames == null) {
-//            System.out.println("Invoice not found");
-//        } else {
-//            System.out.println(getInvByNames);
-//        }
-//
-//        List<Invoice> discounted = it.applyDiscountForFemaleAugustInvoices();
-//        if (discounted == null) {
-//            System.out.println("Invoice not found");
-//        }else {
-//            System.out.println(discounted);
-//        }
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("\n===== Menu =====");
+            System.out.println("1. Hiển thị danh sách khách hàng theo tên");
+            System.out.println("2. Tìm tài khoản theo ID");
+            System.out.println("3. Tìm tài khoản theo tên khách hàng");
+            System.out.println("4. Tìm hoá đơn theo ID");
+            System.out.println("5. Tìm hoá đơn theo tên khách hàng");
+            System.out.println("6. Áp dụng giảm giá cho hoá đơn nữ tháng 8");
+            System.out.println("7. Thanh toán hoá đơn");
+            System.out.println("0. Thoát");
+            System.out.print("Chọn chức năng: ");
+            int choice = sc.nextInt();
+            sc.nextLine();
 
-        System.out.print("\nInput Account ID : ");
-        int accountId = sc.nextInt();
-        Account foundAccById = at.getAccById(accountId);
-        System.out.println("Thanh toán");
-        Invoice payInvoice = it.payBill(foundAccById);
-        if (payInvoice != null) {
-            System.out.println("Thanh toán thành công hoá đơn: " + payInvoice);
-            System.out.println(foundAccById);
-        }else {
-            System.out.println("not đủ");
+            switch (choice) {
+                case 1:
+                    ct.sortedCustomerByName().forEach(System.out::println);
+                    break;
+
+                case 2:
+                    System.out.print("Nhập Account ID: ");
+                    int accountId = sc.nextInt();
+                    Account foundAccById = at.getAccById(accountId);
+                    if (foundAccById != null) {
+                        System.out.println(foundAccById);
+                    } else {
+                        System.out.println("Không tìm thấy tài khoản.");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Nhập tên khách hàng: ");
+                    String accountName = sc.nextLine();
+                    List<Account> getAccByNames = at.getAccByCusName(accountName);
+                    if (getAccByNames == null || getAccByNames.isEmpty()) {
+                        System.out.println("Không tìm thấy tài khoản.");
+                    } else {
+                        System.out.println(getAccByNames);
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Nhập Invoice ID: ");
+                    int invId = sc.nextInt();
+                    Invoice foundInvById = it.getInvoiceById(invId);
+                    if (foundInvById != null) {
+                        System.out.println(foundInvById);
+                    } else {
+                        System.out.println("Không tìm thấy hoá đơn.");
+                    }
+                    break;
+
+                case 5:
+                    System.out.print("Nhập tên khách hàng: ");
+                    String invName = sc.nextLine();
+                    List<Invoice> getInvByNames = it.getInvoicesByName(invName);
+                    if (getInvByNames == null) {
+                        System.out.println("Không tìm thấy hoá đơn.");
+                    } else {
+                        System.out.println(getInvByNames);
+                    }
+                    break;
+
+                case 6:
+                    List<Invoice> discounted = it.applyDiscountForFemaleAugustInvoices();
+                    if (discounted == null || discounted.isEmpty()) {
+                        System.out.println("Không tìm thấy hoá đơn đủ điều kiện giảm giá.");
+                    } else {
+                        System.out.println(discounted);
+                    }
+                    break;
+
+                case 7:
+                    System.out.print("Nhập Account ID: ");
+                    int accIdForPay = sc.nextInt();
+                    Account accForPay = at.getAccById(accIdForPay);
+                    System.out.println("Thanh toán");
+                    Invoice payInvoice = it.payBill(accForPay);
+                    if (payInvoice != null) {
+                        System.out.println("Thanh toán thành công hoá đơn: " + payInvoice);
+                        System.out.println(accForPay);
+                    } else {
+                        System.out.println("Không đủ tiền thanh toán.");
+                    }
+                    break;
+
+                case 0:
+                    exit = true;
+                    System.out.println("Thoát chương trình.");
+                    break;
+
+                default:
+                    System.out.println("Lựa chọn không hợp lệ. Vui lòng chọn lại.");
+            }
         }
+
+        sc.close();
     }
 }
